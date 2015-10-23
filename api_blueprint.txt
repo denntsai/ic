@@ -1,0 +1,35 @@
+Ice Cold API Blueprint
+Author: Denny Tsai
+
+Vendor API's
+
+GET /total
+Returns the total amount of sales in dollars.
+
+GET /sales
+Returns a list of all completed orders.
+
+
+User API's
+
+GET /user
+Generates a customer ID for the user, needed for later API calls.
+
+GET /flavors
+Returns the list of available flavors.
+
+POST /cart
+Updates the user's cart.
+Takes a query string which requires the customer ID as one of the parameters along with flavor choices.
+Example: customerId=11&chocolate=1&vanilla=2
+
+GET /cart/{id}/total
+Gets the total cost of the cart for the user with specified customer id.
+
+GET /cart/{id}
+Gets the user's cart (their ice cream selections)
+
+POST /checkout
+Completes the customers order, purchases all selections for that user.
+Customer ID should be passed in as post data.
+
