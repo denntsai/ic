@@ -34,7 +34,7 @@ public class Application implements CommandLineRunner {
         jdbcTemplate.execute("CREATE TABLE flavors(id SERIAL, identifier VARCHAR(255), name VARCHAR(255))");
 
         /** Insert flavors here **/
-        // TODO: Implement POST/PUT to /flavors to update available flavors
+        // TODO: In the future we want a vendor API to PUT/POST flavors :)
         jdbcTemplate.execute("INSERT INTO flavors(name) VALUES ('Chocolate')");
         jdbcTemplate.execute("INSERT INTO flavors(name) VALUES ('Vanilla')");
         jdbcTemplate.execute("INSERT INTO flavors(name) VALUES ('Strawberry')");

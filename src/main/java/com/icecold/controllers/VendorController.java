@@ -24,6 +24,9 @@ public class VendorController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    /**
+     * Returns the total amount of sales in dollars.
+     */
     @RequestMapping(value="/total", method=RequestMethod.GET)
     public int total() {
         log.info("Querying for total amount from sales");
@@ -34,6 +37,9 @@ public class VendorController {
         return total == null ? 0 : total;
     }
 
+    /**
+     * Returns a list of all completed orders.
+     */
     @RequestMapping(value="/sales", method=RequestMethod.GET)
     public List<Order> sales() {
         log.info("Querying for a list of all sales");

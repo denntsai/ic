@@ -38,12 +38,18 @@ public class UserController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    /**
+     * Redirects the user to the main ordering page.
+     */
     @RequestMapping(value={"/", "/order", "/cart", "/checkout"}, method=RequestMethod.GET)
     public ModelAndView order() {
         ModelAndView model = new ModelAndView("order");
         return model;
     }
 
+    /**
+     * Creates a customer ID for the current user.
+     */
     @RequestMapping(value="/user", method=RequestMethod.GET)
     public Long user() {
         final long cid = counter.getAndIncrement();
@@ -51,16 +57,21 @@ public class UserController {
         return cid;
     }
 
+    /**
+     * Gets the list of available flavors.
+     */
     @RequestMapping(value="/flavors", method=RequestMethod.GET)
     public List<Flavor> flavors(Model model) {
         log.info("Fetching flavors");
 
-        // TEST ZERO FLAVORS!
-        final List<Flavor> result = jdbcTemplate.query("SELECT * FROM flavors", new Object[] {}, new FlavorRowMapper());
-
-        return result;
+        return jdbcTemplate.query("SELECT * FROM flavors", new Object[] {}, new FlavorRowMapper());
     }
 
+    /**
+     * Updates the users cart.
+     * Flavor quantities and customer ID should be passed in as a query string.
+     * Example payload: customerId=10&chocolate=1&vanilla=2
+     */
     @RequestMapping(value="/cart", method=RequestMethod.POST)
     public ModelAndView postCart(@RequestBody String payload) {
         long customerId = -1;
@@ -110,6 +121,9 @@ public class UserController {
         return model;
     }
 
+    /**
+     * Gets the total cost for the user's cart.
+     */
     @RequestMapping(value="/cart/{id}/total", method=RequestMethod.GET)
     public int cartTotal(@PathVariable Long id) {
         log.info("Fetching cart total for customer: " + id);
@@ -121,6 +135,9 @@ public class UserController {
         return result == null ? 0 : result;
     }
 
+    /**
+     * Gets the user's cart.
+     */
     @RequestMapping(value="/cart/{id}", method=RequestMethod.GET)
     public List<Order> getCart(@PathVariable Long id) {
         log.info("Fetching cart for customer: " + id);
@@ -132,6 +149,9 @@ public class UserController {
         return result;
     }
 
+    /**
+     * Completes the user's order.
+     */
     @RequestMapping(value="/checkout", method=RequestMethod.POST)
     public ModelAndView checkout(@RequestParam(value="customerId", required=true) Long customerId) {
         log.info("Checking out for user: " + customerId);
