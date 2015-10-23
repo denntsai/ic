@@ -1,0 +1,60 @@
+<!doctype html>
+<html ng-app="CartModule">
+    <head>
+        <title>Shopping Cart</title>
+
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+        <script type="text/javascript">
+            angular.module('CartModule', []).controller('CartController', function($scope, $location, $http) {
+                var endpoint = $location.protocol() + "://" + $location.host();
+                if ($location.host() === 'localhost') {
+                    endpoint += ":" + $location.port();
+                }
+
+                var customerId = JSON.parse(sessionStorage.getItem("customerId"));
+                document.getElementById('customerId').setAttribute('value', customerId);
+
+                $http.get(endpoint + "/cart/" + customerId).success(function(response) {
+                    if (response.length > 0) {
+                        $scope.flavor = response;
+                    } else {
+                        document.getElementById('emptyCart').style.display = '';
+                        document.getElementById('submitButton').style.display = 'none';
+                    }
+                });
+
+                $http.get(endpoint + "/cart/" + customerId + "/total").success(function(response) {
+                    if (response > 0) {
+                        document.getElementById('total').innerHTML = "Total Cost: $" + response;
+                    }
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="text-center container-fluid" ng-controller="CartController">
+            <div class="page-header">
+                <h2>Your Cart</h2>
+            </div>
+
+            <div id="emptyCart" style="display: none">
+                <h3>Your cart is empty!</h3>
+                <a href="/order">Click here to start a new order</a>
+            </div>
+
+            <div ng-repeat="f in flavor">
+                <label>Scoops of {{f.flavor}}: {{f.quantity}}</label>
+            </div>
+            <label id="total"></label>
+            <form id="cartForm" action="/checkout" method="post">
+                <input id='customerId' name="customerId" type="number" style="display: none;" />
+            </form>
+            <div id="submitButton">
+                <button class="btn btn-success" type="submit" form="cartForm" value="Submit">Complete Order</button>
+            </div>
+        </div>
+    </body>
+</html>

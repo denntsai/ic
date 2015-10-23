@@ -1,0 +1,48 @@
+<!doctype html>
+<html ng-app="OrderModule">
+    <head>
+        <title>Order Page</title>
+
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+
+        <!-- I would normally have this JS being served from a CDN.. but I couldn't get it to work -->
+        <script type="text/javascript">
+            angular.module('OrderModule', []).controller('FlavorController', function($scope, $location, $http) {
+                var endpoint = $location.protocol() + "://" + $location.host();
+                if ($location.host() === 'localhost') {
+                    endpoint += ":" + $location.port();
+                }
+
+                $http.get(endpoint + "/flavors").success(function(response) {
+                    $scope.flavor = response;
+                });
+
+                $http.get(endpoint + "/user").success(function(response) {
+                    sessionStorage.setItem("customerId", JSON.stringify(response));
+                    document.getElementById('customerId').setAttribute('value', response);
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="text-center container-fluid" ng-controller="FlavorController">
+            <div class="page-header">
+                <h1>Welcome to Ice Cold!</h1>
+                <h2>Available Flavors</h2>
+                <h2><small>Each scoop costs $1</small></h2>
+            </div>
+
+            <form id="orderForm" action="/cart" method="post">
+                <div class="form-group" ng-repeat="f in flavor">
+                    <label>{{f.name}} scoops</label>
+                    <input name="{{f.name}}" type="number" min="0" max="999" value="0"/><br/>
+                </div>
+                <input id='customerId' name="customerId" type="number" style="display: none;" />
+            </form>
+            <button class="btn btn-success" type="submit" form="orderForm" value="Submit">Add to Cart</button>
+        </div>
+    </body>
+</html>
